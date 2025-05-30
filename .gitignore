@@ -176,4 +176,6 @@ cython_debug/
 venv
 .venv
 
-models/
+models/bilstm_tiktoken_model.h5
+
+notebooks/emotions/bilstm_model.h5
