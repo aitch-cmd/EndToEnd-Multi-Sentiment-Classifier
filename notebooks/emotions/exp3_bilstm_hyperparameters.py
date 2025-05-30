@@ -207,8 +207,9 @@ with mlflow.start_run(run_name="BiLSTM with Tiktoken BPE and RandomizedSearchCV"
     model_path = "models/bilstm_tiktoken_model.h5"
     best_model = random_search_result.best_estimator_.model_
     best_model.save(model_path)
-    
+
     mlflow.log_artifact(model_path)
+
     
     end_time = time.time()
     logging.info(f"Total time for RandomizedSearchCV: {end_time - start_time:.2f} seconds")
