@@ -113,7 +113,7 @@ pathvalidate==3.0.0
 pillow==10.4.0
 platformdirs==3.11.0
 prompt_toolkit==3.0.47
-protobuf==5.27.3
+protobuf>=3.20.3,<5.0.0
 psutil==6.0.0
 pyarrow==15.0.2
 pyasn1==0.6.0
@@ -169,12 +169,14 @@ voluptuous==0.15.2
 waitress==3.0.0
 wcwidth==0.2.13
 Werkzeug==3.0.3
-wrapt==1.16.0
+wrapt>=1.11.0,<1.15
 yarl==1.9.4
 zc.lockfile==3.0.post1
 zipp==3.19.2
 prometheus_client
-tensorflow>=2.11.0
 tiktoken
+tensorflow==2.15.0
+keras==2.15.0
+scikeras
 
 -e .

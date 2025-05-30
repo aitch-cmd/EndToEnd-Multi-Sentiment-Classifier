@@ -131,15 +131,6 @@ def encode_with_tiktoken(texts):
     padded=pad_sequences(sequences, maxlen=CONFIG['max_len'], padding='post', truncating='post')
     return padded
 
-def build_model(input_length):
-    """Builds the BiLSTM model."""
-    model=Sequential([
-        Embedding(input_dim=vocab_size, output_dim=CONFIG['embedding_dim'], input_length=input_length),
-        Bidirectional(LSTM(64, return_sequences=True)),
-        Dropout(0.5),
-        Dense(num_classes, activation='softmax')])
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    return model
 def build_model(vocab_size, num_classes):
     model = Sequential([
         Embedding(input_dim=vocab_size, output_dim=CONFIG["embedding_dim"], input_length=CONFIG["max_len"]),
@@ -150,7 +141,6 @@ def build_model(vocab_size, num_classes):
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
-# ================== TRAIN & EVALUATE ===============
 
 def train_and_evaluate(train_df, valid_df, test_df, tokenizer_type="tf"):
     with mlflow.start_run(run_name=f"BiLSTM with {tokenizer_type} tokenizer"):
