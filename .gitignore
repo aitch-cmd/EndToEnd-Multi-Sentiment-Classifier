@@ -185,3 +185,5 @@ bilstm_tf_model.h5
 
 tf_env/
 src.egg-info/
+
+local_s3/
