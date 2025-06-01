@@ -15,7 +15,6 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from scikeras.wrappers import KerasClassifier
 import mlflow
-import mlflow.keras
 import tiktoken
 import dagshub
 import warnings

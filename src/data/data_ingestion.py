@@ -52,15 +52,15 @@ def save_data(train_data: pd.DataFrame, valid_data: pd.DataFrame, test_data: pd.
 
 def main():
     try:
-        # params=load_params('params.yaml')
-        # train_data=load_data(r"D:\projects\testing\notebooks\emotions\training.csv")
-        # valid_data=load_data(r"D:\projects\testing\notebooks\emotions\validation.csv")
-        # test_data=load_data(r"D:\projects\testing\notebooks\emotions\test.csv")
+        params=load_params('params.yaml')
+        train_data=load_data(r"D:\projects\testing\notebooks\emotions\training.csv")
+        valid_data=load_data(r"D:\projects\testing\notebooks\emotions\validation.csv")
+        test_data=load_data(r"D:\projects\testing\notebooks\emotions\test.csv")
 
-        s3 = s3_connection.s3_operations("emotion-df-s3", "AKIAS2VS4C2QDGEUSDOW", "CKz0HsiH/c2NtY7uYkQFFRS/0Uu3oaoe2bXOIfr+")
-        train_data = s3.fetch_file_from_s3("training.csv")
-        valid_data = s3.fetch_file_from_s3("validation.csv")
-        test_data = s3.fetch_file_from_s3("test.csv")
+        # s3 = s3_connection.s3_operations("emotion-df-s3", "AKIAS2VS4C2QDGEUSDOW", "CKz0HsiH/c2NtY7uYkQFFRS/0Uu3oaoe2bXOIfr+")
+        # train_data = s3.fetch_file_from_s3("training.csv")
+        # valid_data = s3.fetch_file_from_s3("validation.csv")
+        # test_data = s3.fetch_file_from_s3("test.csv")
 
         save_data(train_data, valid_data, test_data, data_path='./data')
     except Exception as e:

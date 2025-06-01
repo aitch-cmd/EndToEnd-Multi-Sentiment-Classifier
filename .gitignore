@@ -187,3 +187,5 @@ tf_env/
 src.egg-info/
 
 local_s3/
+
+data/
