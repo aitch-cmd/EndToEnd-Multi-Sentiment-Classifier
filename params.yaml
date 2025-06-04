@@ -4,3 +4,10 @@ feature_engineering:
   num_words: 10000
   batch_size: 64
  
+train_model:
+  max_len: 100
+  embedding_dim: 64
+  epochs: 9
+  batch_size: 64
+
+  

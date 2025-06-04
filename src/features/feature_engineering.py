@@ -86,13 +86,13 @@ def main():
         data_path = os.path.join("./data", "interim")
         os.makedirs(data_path, exist_ok=True)
 
-        train_df.to_csv(os.path.join(data_path, "train_processed.csv"), index=False)
-        test_df.to_csv(os.path.join(data_path, "test_processed.csv"), index=False)
-        val_df.to_csv(os.path.join(data_path, "validation_processed.csv"), index=False)
+        train_df.to_csv(os.path.join(data_path, "train_bpe.csv"), index=False)
+        test_df.to_csv(os.path.join(data_path, "test_bpe.csv"), index=False)
+        val_df.to_csv(os.path.join(data_path, "validation_bpe.csv"), index=False)
 
-        np.save(os.path.join(data_path, "train_padded.npy"), train_padded)
-        np.save(os.path.join(data_path, "test_padded.npy"), test_padded)
-        np.save(os.path.join(data_path, "validation_padded.npy"), val_padded)
+        np.save(os.path.join(data_path, "train_bpe.npy"), train_padded)
+        np.save(os.path.join(data_path, "test_bpe.npy"), test_padded)
+        np.save(os.path.join(data_path, "validation_bpe.npy"), val_padded)
 
         logging.info('Processed data saved at %s', data_path)
         
