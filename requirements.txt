@@ -178,5 +178,7 @@ tiktoken
 tensorflow==2.15.0
 keras==2.15.0
 scikeras
+dvc[s3]
+awscli 
 
 -e .

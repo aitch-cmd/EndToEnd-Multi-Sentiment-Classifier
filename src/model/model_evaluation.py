@@ -118,7 +118,7 @@ def save_metrics(metrics: dict, file_path: str) -> None:
 def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
     """Save the model run ID and path to a JSON file."""
     try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)  # <-- ensures 'reports/' exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)  
 
         model_info = {'run_id': run_id, 'model_path': model_path}
         with open(file_path, 'w') as file:
@@ -130,7 +130,7 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
 
 def main():
     mlflow.set_experiment("my-dvc-pipeline")
-    with mlflow.start_run() as run:  # Start an MLflow run
+    with mlflow.start_run() as run:  
         try:
             clf = load_model(r'D:\projects\testing\models\model.h5')
 
