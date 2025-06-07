@@ -5,8 +5,8 @@ stages:
     deps:
     - src/data/data_ingestion.py
     - notebooks/emotions/training.csv
-    - notebooks/emotions/training.csv
-    - notebooks/emotions/training.csv
+    - notebooks/emotions/test.csv
+    - notebooks/emotions/validation.csv
     outs:
     - data/raw/train.csv
     - data/raw/test.csv
