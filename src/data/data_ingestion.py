@@ -4,7 +4,6 @@ pd.set_option('future.no_silent_downcasting', True)
 import os
 import yaml
 import logging
-import src.logger
 from src.connections import s3_connection
 
 def load_params(params_path:str)-> dict:
