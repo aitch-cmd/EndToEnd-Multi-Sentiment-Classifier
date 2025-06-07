@@ -4,7 +4,7 @@ pd.set_option('future.no_silent_downcasting', True)
 import os
 import yaml
 import logging
-from src.connections import s3_connection
+# from src.connections import s3_connection
 
 def load_params(params_path:str)-> dict:
     """Loads parameters from a YAML file."""
