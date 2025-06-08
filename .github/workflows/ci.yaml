@@ -27,6 +27,12 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: install dvc
+        run: pip install dvc[s3]  # If you use S3, otherwise just 'pip install dvc'
+
+      - name: pull data from DVC remote
+        run: dvc pull
+
       - name: run pipeline
         env:
           CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
