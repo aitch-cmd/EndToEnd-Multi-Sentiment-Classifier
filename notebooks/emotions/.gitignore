@@ -1,3 +1,6 @@
 /training.csv
 /validation.csv
 /test.csv
+
+data/raw/
+data/interim/

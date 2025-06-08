@@ -3,22 +3,22 @@ stages:
   data_ingestion:
     cmd: python src/data/data_ingestion.py
     deps:
+    - path: notebooks/emotions/test.csv
+      hash: md5
+      md5: 6d16daa707d258e0ae26b2d8732a0308
+      size: 201183
     - path: notebooks/emotions/training.csv
       hash: md5
       md5: 50ef564327692518124ff343229ff6c0
       size: 1613543
-    - path: notebooks/emotions/training.csv
+    - path: notebooks/emotions/validation.csv
       hash: md5
-      md5: 50ef564327692518124ff343229ff6c0
-      size: 1613543
-    - path: notebooks/emotions/training.csv
-      hash: md5
-      md5: 50ef564327692518124ff343229ff6c0
-      size: 1613543
+      md5: b46c26972a13b5a4fadd93234c028d40
+      size: 198705
     - path: src/data/data_ingestion.py
       hash: md5
-      md5: 200eac78c9c1878b1158ccfff48f5ed4
-      size: 2916
+      md5: e729ef99c0b5db7d5a8256af8fdc321e
+      size: 2899
     outs:
     - path: data/raw/test.csv
       hash: md5
