@@ -13,6 +13,8 @@ from sklearn.preprocessing import label_binarize
 import numpy as np
 import json
 logging.basicConfig(level=logging.INFO)
+from dotenv import load_dotenv
+load_dotenv()
 
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
