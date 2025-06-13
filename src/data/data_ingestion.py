@@ -52,9 +52,9 @@ def save_data(train_data: pd.DataFrame, valid_data: pd.DataFrame, test_data: pd.
 def main():
     try:
         params=load_params('params.yaml')
-        train_data=load_data(r"notebooks\emotions\training.csv")
-        valid_data=load_data(r"notebooks\emotions\validation.csv")
-        test_data=load_data(r"notebooks\emotions\test.csv")
+        train_data=load_data("notebooks/emotions/training.csv")
+        valid_data=load_data("notebooks/emotions/validation.csv")
+        test_data=load_data("notebooks/emotions/test.csv")
 
         # s3 = s3_connection.s3_operations("emotion-df-s3", "AKIAS2VS4C2QDGEUSDOW", "CKz0HsiH/c2NtY7uYkQFFRS/0Uu3oaoe2bXOIfr+")
         # train_data = s3.fetch_file_from_s3("training.csv")
