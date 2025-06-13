@@ -2,11 +2,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_a
 import os
 import mlflow
 import dagshub
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from src.logger import logging
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 import logging
-import src.logger
 import pandas as pd
 from tensorflow.keras.models import load_model as keras_load_model
 from sklearn.preprocessing import label_binarize

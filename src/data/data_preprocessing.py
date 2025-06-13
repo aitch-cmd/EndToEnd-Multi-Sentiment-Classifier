@@ -3,9 +3,11 @@ import re
 import string
 import time
 import logging
-import src.logger
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 import numpy as np
 import pandas as pd
+from src.logger import logging
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -95,9 +97,9 @@ def preprocess_dataframe(df, col='text'):
 def main():
     try:
         # Fetch the data from data/raw
-        train_data = pd.read_csv(r'data\raw\train.csv')
-        test_data = pd.read_csv(r'data\raw\test.csv')
-        validation_data = pd.read_csv(r'data\raw\valid.csv')
+        train_data = pd.read_csv('data\raw\train.csv')
+        test_data = pd.read_csv('data\raw\test.csv')
+        validation_data = pd.read_csv('data\raw\valid.csv')
         logging.info('data loaded properly')
 
         # Transform the data
