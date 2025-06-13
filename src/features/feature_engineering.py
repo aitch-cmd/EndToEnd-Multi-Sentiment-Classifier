@@ -72,9 +72,9 @@ def feature_df(df, col='text'):
 def main():
     try:
         # Load data
-        train_df = load_data(r'D:\projects\testing\data\interim\train_processed.csv')
-        test_df = load_data(r'D:\projects\testing\data\interim\test_processed.csv')
-        val_df = load_data(r'D:\projects\testing\data\interim\validation_processed.csv')
+        train_df = load_data(r'data\interim\train_processed.csv')
+        test_df = load_data(r'data\interim\test_processed.csv')
+        val_df = load_data(r'data\interim\validation_processed.csv')
         logging.info('Data loaded successfully.')
 
         # Use preprocess_dataframe to clean, tokenize and pad 
