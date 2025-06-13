@@ -180,5 +180,6 @@ keras==2.15.0
 scikeras
 dvc[s3]
 awscli 
+python-dotenv
 
 -e .
