@@ -97,9 +97,9 @@ def preprocess_dataframe(df, col='text'):
 def main():
     try:
         # Fetch the data from data/raw
-        train_data = pd.read_csv('data\raw\train.csv')
-        test_data = pd.read_csv('data\raw\test.csv')
-        validation_data = pd.read_csv('data\raw\valid.csv')
+        train_data = pd.read_csv("data/raw/train.csv")
+        test_data = pd.read_csv("data/raw/test.csv")
+        validation_data = pd.read_csv("data/raw/valid.csv")
         logging.info('data loaded properly')
 
         # Transform the data
