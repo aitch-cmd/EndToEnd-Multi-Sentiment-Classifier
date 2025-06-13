@@ -109,17 +109,17 @@ def main():
         logging.info("Starting the model building process...")
 
         # Load padded input sequences
-        X_train = load_padded_sequence(r"data\interim\train_bpe.npy")
+        X_train = load_padded_sequence('data/interim/train_bpe.npy')
         logging.info(f"Loaded training padded sequences: {X_train.shape}")
 
-        X_val = load_padded_sequence(r"data\interim\validation_bpe.npy")
+        X_val = load_padded_sequence('data/interim/validation_bpe.npy')
         logging.info(f"Loaded validation padded sequences: {X_val.shape}")
 
         # Load labels
-        y_train = load_data(r"data\interim\train_bpe.csv")['label'].values
+        y_train = load_data('data/interim/train_bpe.csv')['label'].values
         logging.info(f"Loaded training labels: {y_train.shape}")
 
-        y_valid = load_data(r"data\interim\validation_bpe.csv")['label'].values
+        y_valid = load_data('data/interim/validation_bpe.csv')['label'].values
         logging.info(f"Loaded validation labels: {y_valid.shape}")
 
         # Get number of classes

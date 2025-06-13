@@ -137,10 +137,11 @@ def main():
     mlflow.set_experiment("my-dvc-pipeline")
     with mlflow.start_run() as run:  
         try:
-            clf = load_model(r'models\model.h5')
+            clf = load_model('models/model.h5')
 
-            X_test = load_padded_sequence(r'data\interim\test_bpe.npy')
-            y_test = load_data(r'data\interim\test_bpe.csv')['label'].values
+            X_test = load_padded_sequence('data/interim/test_bpe.npy')
+            y_test = load_data('data/interim/test_bpe.csv')['label'].values
+
 
             metrics = evaluate_model(clf, X_test, y_test)
             
