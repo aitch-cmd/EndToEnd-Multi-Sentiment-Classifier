@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
+from tensorflow.keras.models import load_model
 
 class TestModelLoading(unittest.TestCase):
 
@@ -33,10 +34,10 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
         # Load the vectorizer
-        cls.vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
+        cls.vectorizer = load_model('models/model.h5')
 
         # Load holdout test data
-        cls.holdout_data = pd.read_csv('data/processed/test_bow.csv')
+        cls.holdout_data = pd.read_csv('data/interim/test_processed.csv')
 
     @staticmethod
     def get_latest_model_version(model_name, stage="Staging"):

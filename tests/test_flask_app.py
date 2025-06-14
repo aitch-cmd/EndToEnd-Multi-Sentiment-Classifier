@@ -14,10 +14,14 @@ class FlaskAppTests(unittest.TestCase):
 
     def test_predict_page(self):
         response = self.client.post('/predict', data=dict(text="I love this!"))
+
         self.assertEqual(response.status_code, 200)
+
+        expected_labels = [b'sadness', b'joy', b'love', b'anger', b'fear']
+
         self.assertTrue(
-            b'Positive' in response.data or b'Negative' in response.data,
-            "Response should contain either 'Positive' or 'Negative'"
+            any(label in response.data for label in expected_labels),
+            "Response should contain one of the emotion labels: sadness, joy, love, anger, or fear"
         )
 
 if __name__ == '__main__':
