@@ -1,5 +1,5 @@
 # load test + signature test + performance test
-
+import logging
 import unittest
 import mlflow
 import os
@@ -7,6 +7,43 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
 from tensorflow.keras.models import load_model
+import numpy as np
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import tiktoken
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logging.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logging.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logging.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error: %s', e)
+        raise
+
+logging.basicConfig(level=logging.INFO)
+CONFIG = load_params("params.yaml")["test_model"]
+
+
+def load_data(file_path: str) -> pd.DataFrame:
+    """Load data from a CSV file."""
+    try:
+        df = pd.read_csv(file_path)
+        logging.info('Data loaded from %s', file_path)
+        return df
+    except pd.errors.ParserError as e:
+        logging.error('Failed to parse the CSV file: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error occurred while loading the data: %s', e)
+        raise
 
 class TestModelLoading(unittest.TestCase):
 
@@ -49,20 +86,21 @@ class TestModelLoading(unittest.TestCase):
         self.assertIsNotNone(self.new_model)
 
     def test_model_signature(self):
-        # Create a dummy input for the model based on expected input shape
+        enc=tiktoken.get_encoding("cl100k_base")
         input_text = "hi how are you"
-        input_data = self.vectorizer.transform([input_text])
-        input_df = pd.DataFrame(input_data.toarray(), columns=[str(i) for i in range(input_data.shape[1])])
+        input_seq=enc.encode(input_text)
 
-        # Predict using the new model to verify the input and output shapes
-        prediction = self.new_model.predict(input_df)
+        padded_input=pad_sequences([input_seq], maxlen=CONFIG["max_len"], padding='post', truncating='post')
 
-        # Verify the input shape
-        self.assertEqual(input_df.shape[1], len(self.vectorizer.get_feature_names_out()))
+        # Predict using the new model
+        prediction = self.new_model.predict(padded_input)
 
-        # Verify the output shape (assuming binary classification with a single output)
-        self.assertEqual(len(prediction), input_df.shape[0])
-        self.assertEqual(len(prediction.shape), 1)  # Assuming a single output column for binary classification
+        y_train = load_data('data/interim/train_bpe.csv')['label'].values
+        num_classes = len(np.unique(y_train))
+        # Assertions
+        self.assertEqual(padded_input.shape[1], CONFIG["max_len"])
+        self.assertEqual(prediction.shape[0], 1)  # 1 sample
+        self.assertEqual(prediction.shape[1], num_classes)
 
     def test_model_performance(self):
         # Extract features and labels from holdout test data

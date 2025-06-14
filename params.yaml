@@ -10,4 +10,5 @@ train_model:
   epochs: 9
   batch_size: 64
 
-  
+test_model:
+  max_len: 100
