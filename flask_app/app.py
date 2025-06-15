@@ -121,10 +121,22 @@ def preprocess_text_for_prediction(text, max_len=100):
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri('https://dagshub.com/harshitneverdebugs/testing.mlflow')
-dagshub.init(repo_owner='harshitneverdebugs', repo_name='testing', mlflow=True)
+# mlflow.set_tracking_uri('https://dagshub.com/harshitneverdebugs/testing.mlflow')
+# dagshub.init(repo_owner='harshitneverdebugs', repo_name='testing', mlflow=True)
 # -------------------------------------------------------------------------------------
 
+dagshub_token = os.getenv("CAPSTONE_TEST")
+if not dagshub_token:
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+dagshub_url = "https://dagshub.com"
+repo_owner = "harshitneverdebugs"
+repo_name = "testing"
+# Set up MLflow tracking URI
+mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 # Initialize Flask app
 app = Flask(__name__)
 
