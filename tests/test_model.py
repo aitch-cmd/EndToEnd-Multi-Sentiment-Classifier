@@ -1,4 +1,3 @@
-# load test + signature test + performance test
 import logging
 import unittest
 import mlflow
@@ -6,11 +5,11 @@ import os
 import pandas as pd
 import yaml
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import pickle
 from tensorflow.keras.models import load_model
 import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import tiktoken
+import time
 
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
@@ -31,7 +30,6 @@ def load_params(params_path: str) -> dict:
 
 logging.basicConfig(level=logging.INFO)
 CONFIG = load_params("params.yaml")["test_model"]
-
 
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file."""
@@ -65,6 +63,7 @@ class TestModelLoading(unittest.TestCase):
     def setUpClass(cls):
         # Set up DagsHub credentials for MLflow tracking
         dagshub_token = os.getenv("CAPSTONE_TEST")
+        print(f"DAGSHUB TOKEN (length): {len(dagshub_token) if dagshub_token else 'None'}")
         if not dagshub_token:
             raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
@@ -78,13 +77,24 @@ class TestModelLoading(unittest.TestCase):
         # Set up MLflow tracking URI
         mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
-        # Load the new model from MLflow model registry
+        # Load the model with retry logic
         cls.new_model_name = "my_model"
         cls.new_model_version = cls.get_latest_model_version(cls.new_model_name)
         cls.new_model_uri = f'models:/{cls.new_model_name}/{cls.new_model_version}'
-        cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
-        # Load the vectorizer
+        for attempt in range(3):
+            try:
+                print(f"[Attempt {attempt+1}] Loading model from {cls.new_model_uri}")
+                cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
+                print("✅ Model loaded successfully.")
+                break
+            except Exception as e:
+                print(f"❌ Failed to load model on attempt {attempt+1}: {e}")
+                time.sleep(5)
+        else:
+            raise RuntimeError("❌ Could not load model from MLflow after 3 attempts.")
+
+        # Load the vectorizer model (from local h5 file)
         cls.vectorizer = load_model('models/model.h5')
 
         # Load holdout test data
@@ -100,19 +110,18 @@ class TestModelLoading(unittest.TestCase):
         self.assertIsNotNone(self.new_model)
 
     def test_model_signature(self):
-        enc=tiktoken.get_encoding("cl100k_base")
+        enc = tiktoken.get_encoding("cl100k_base")
         input_text = "hi how are you"
-        input_seq=enc.encode(input_text)
+        input_seq = enc.encode(input_text)
 
-        padded_input=pad_sequences([input_seq], maxlen=CONFIG["max_len"], padding='post', truncating='post')
-
-        input_array = np.array(padded_input, dtype=np.float32)  
-        input_df = pd.DataFrame(input_array)
+        padded_input = pad_sequences([input_seq], maxlen=CONFIG["max_len"], padding='post', truncating='post')
+        input_array = np.array(padded_input, dtype=np.float32)
 
         prediction = self.vectorizer.predict(input_array)
 
         y_train = load_data('data/interim/test_bpe.csv')['label'].values
         num_classes = len(np.unique(y_train))
+
         # Assertions
         self.assertEqual(padded_input.shape[1], CONFIG["max_len"])
         self.assertEqual(prediction.shape[0], 1)  # 1 sample
@@ -120,11 +129,11 @@ class TestModelLoading(unittest.TestCase):
 
     def test_model_performance(self):
         enc = tiktoken.get_encoding("cl100k_base")
-        
+
         # Tokenize and pad the holdout texts
         tokenized = self.holdout_data['text'].apply(lambda text: enc.encode(text))
         padded_sequences = pad_sequences(tokenized.tolist(), maxlen=CONFIG["max_len"], padding="post", truncating="post")
-        
+
         X_holdout = np.array(padded_sequences, dtype=np.float32)
         y_holdout = self.holdout_data['label'].values
 
@@ -149,8 +158,6 @@ class TestModelLoading(unittest.TestCase):
         self.assertGreaterEqual(precision_new, expected_precision)
         self.assertGreaterEqual(recall_new, expected_recall)
         self.assertGreaterEqual(f1_new, expected_f1)
-
-
 
 if __name__ == "__main__":
     unittest.main()
