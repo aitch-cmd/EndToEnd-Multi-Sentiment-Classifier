@@ -32,6 +32,7 @@ def load_params(params_path: str) -> dict:
 logging.basicConfig(level=logging.INFO)
 CONFIG = load_params("params.yaml")["test_model"]
 
+
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file."""
     try:
@@ -83,8 +84,8 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model_uri = f'models:/{cls.new_model_name}/{cls.new_model_version}'
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
-        # Load the Keras classification model
-        cls.keras_model = load_model('models/model.h5')
+        # Load the vectorizer
+        cls.vectorizer = load_model('models/model.h5')
 
         # Load holdout test data
         cls.holdout_data = pd.read_csv('data/interim/test_processed.csv')
@@ -99,38 +100,43 @@ class TestModelLoading(unittest.TestCase):
         self.assertIsNotNone(self.new_model)
 
     def test_model_signature(self):
-        enc = tiktoken.get_encoding("cl100k_base")
+        enc=tiktoken.get_encoding("cl100k_base")
         input_text = "hi how are you"
-        input_seq = enc.encode(input_text)
+        input_seq=enc.encode(input_text)
 
-        padded_input = pad_sequences([input_seq], maxlen=CONFIG["max_len"], padding='post', truncating='post')
-        input_array = np.array(padded_input, dtype=np.float32)
+        padded_input=pad_sequences([input_seq], maxlen=CONFIG["max_len"], padding='post', truncating='post')
+
+        input_array = np.array(padded_input, dtype=np.float32)  
         input_df = pd.DataFrame(input_array)
 
-        prediction = self.keras_model.predict(input_array)
+        prediction = self.vectorizer.predict(input_array)
 
-        # Load labels from the test .npy file
-        y_train = load_padded_sequence('data/interim/test_bpe.npy')  # Should be label array
+        y_train = load_data('data/interim/test_bpe.csv')['label'].values
         num_classes = len(np.unique(y_train))
-
         # Assertions
         self.assertEqual(padded_input.shape[1], CONFIG["max_len"])
-        self.assertEqual(prediction.shape[0], 1)  # One input sample
+        self.assertEqual(prediction.shape[0], 1)  # 1 sample
         self.assertEqual(prediction.shape[1], num_classes)
 
     def test_model_performance(self):
-        # Extract features and labels from holdout test data
-        X_holdout = self.holdout_data.iloc[:, :-1]
-        y_holdout = self.holdout_data.iloc[:, -1]
+        enc = tiktoken.get_encoding("cl100k_base")
+        
+        # Tokenize and pad the holdout texts
+        tokenized = self.holdout_data['text'].apply(lambda text: enc.encode(text))
+        padded_sequences = pad_sequences(tokenized.tolist(), maxlen=CONFIG["max_len"], padding="post", truncating="post")
+        
+        X_holdout = np.array(padded_sequences, dtype=np.float32)
+        y_holdout = self.holdout_data['label'].values
 
         # Predict using the new model
         y_pred_new = self.new_model.predict(X_holdout)
+        y_pred_classes = np.argmax(y_pred_new, axis=1)
 
         # Calculate performance metrics
-        accuracy_new = accuracy_score(y_holdout, y_pred_new)
-        precision_new = precision_score(y_holdout, y_pred_new, average='weighted')
-        recall_new = recall_score(y_holdout, y_pred_new, average='weighted')
-        f1_new = f1_score(y_holdout, y_pred_new, average='weighted')
+        accuracy_new = accuracy_score(y_holdout, y_pred_classes)
+        precision_new = precision_score(y_holdout, y_pred_classes, average='weighted')
+        recall_new = recall_score(y_holdout, y_pred_classes, average='weighted')
+        f1_new = f1_score(y_holdout, y_pred_classes, average='weighted')
 
         # Define expected thresholds
         expected_accuracy = 0.40
@@ -138,13 +144,13 @@ class TestModelLoading(unittest.TestCase):
         expected_recall = 0.40
         expected_f1 = 0.40
 
-        # Assertions for performance
-        self.assertGreaterEqual(accuracy_new, expected_accuracy, f'Accuracy should be at least {expected_accuracy}')
-        self.assertGreaterEqual(precision_new, expected_precision, f'Precision should be at least {expected_precision}')
-        self.assertGreaterEqual(recall_new, expected_recall, f'Recall should be at least {expected_recall}')
-        self.assertGreaterEqual(f1_new, expected_f1, f'F1 score should be at least {expected_f1}')
+        # Assert performance
+        self.assertGreaterEqual(accuracy_new, expected_accuracy)
+        self.assertGreaterEqual(precision_new, expected_precision)
+        self.assertGreaterEqual(recall_new, expected_recall)
+        self.assertGreaterEqual(f1_new, expected_f1)
 
-        print(X_holdout.dtypes)
+
 
 if __name__ == "__main__":
     unittest.main()
