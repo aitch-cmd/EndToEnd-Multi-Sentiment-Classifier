@@ -188,20 +188,6 @@ def home():
     REQUEST_LATENCY.labels(endpoint="/").observe(time.time() - start_time)
     return response
 
-def safe_extract_scalar(arr):
-    arr = np.array(arr)
-    if arr.size == 1:
-        return int(arr.item())
-    elif arr.ndim == 2 and arr.shape[0] == 1:
-        # 2D with one row, possibly multiple columns (e.g., [[1,2,3]])
-        return int(np.argmax(arr[0]))
-    elif arr.ndim == 1 and arr.size > 1:
-        # 1D array with multiple elements (e.g., [1,2,3])
-        return int(np.argmax(arr))
-    else:
-        # Fallback: try to convert the first element
-        return int(arr.flat[0])
-
 @app.route("/predict", methods=["POST"])
 def predict():
     REQUEST_COUNT.labels(method="POST", endpoint="/predict").inc()
