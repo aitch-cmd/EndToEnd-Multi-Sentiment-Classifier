@@ -72,7 +72,7 @@ def building_model(vocab_size, num_classes, CONFIG):
         Dense(num_classes, activation='softmax')
     ])
     
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     logging.info("Model compilation complete.")
     return model
 
