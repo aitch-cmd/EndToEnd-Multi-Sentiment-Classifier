@@ -14,6 +14,8 @@ spec:
       labels:
         app: flask-app
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
       - name: flask-app
         image: 194722404000.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
@@ -21,10 +23,10 @@ spec:
         - containerPort: 5000
         resources:
           requests:
-            memory: "256Mi"
+            memory: "1Gi"
             cpu: "250m"
           limits:
-            memory: "512Mi"
+            memory: "4Gi"
             cpu: "1"
         env:
         - name: CAPSTONE_TEST
